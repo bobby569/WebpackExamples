@@ -1,6 +1,6 @@
-var path = require("path");
-var webpack = require("webpack");
-var HTMLWebapckPlugin = require("html-webpack-plugin");
+const path = require("path");
+const webpack = require("webpack");
+const HTMLWebapckPlugin = require("html-webpack-plugin");
 
 const VENDOR_LIBS = [
   "faker",
@@ -24,6 +24,19 @@ module.exports = {
     path: path.join(__dirname, "dist"),
     filename: "[name].[chunkhash].js"
   },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          chunks: "initial",
+          test: "vendor",
+          name: "vendor",
+          enforce: true
+        }
+      }
+    }
+  },
+  mode: "development",
   module: {
     rules: [
       {
@@ -32,7 +45,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"]
+            presets: ["@babel/preset-env", "@babel/preset-react"]
           }
         }
       },
@@ -43,9 +56,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ["vendor", "manifest"]
-    }),
     new HTMLWebapckPlugin({
       template: "src/index.html"
     }),
